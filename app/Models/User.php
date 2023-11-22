@@ -20,7 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'is_admin',
     ];
 
     /**
@@ -42,4 +42,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function groups(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Group::class, 'user_groups');
+    }
+
+    public function cvs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Cv::class);
+    }
+
+    public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'user_permissions');
+    }
 }

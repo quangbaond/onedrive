@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OndriveController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/onedrive', [OndriveController::class, 'index']);
+Route::get('/onedrive/callback', [OndriveController::class, 'callback']);
+Route::get('/onedrive/drive', [OndriveController::class, 'viewUpload'])->name('onedrive.upload_view');
+Route::post('/onedrive/upload', [OndriveController::class, 'upload'])->name('onedrive.upload');

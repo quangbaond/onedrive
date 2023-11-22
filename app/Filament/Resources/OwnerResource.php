@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Http;
 
 class OwnerResource extends Resource
 {
@@ -42,14 +43,30 @@ class OwnerResource extends Resource
                     ->placeholder(__('Address')),
                 Forms\Components\FileUpload::make('cv')
                     ->placeholder(__('Cv'))
-                // sua khi upload xong
+                    // sua khi upload xong
                     ->afterStateUpdated(function (Forms\Components\FileUpload $component, $state) {
                         $component->state($state);
 
-                        $realPath = $state->getRealPath();
-                        dd($realPath);
-                    })
-                ,
+                        // get file
+                        $file = $component->getUploadedFile();
+
+                        $accessToken = session()->get('accessToken');
+                        $fileName = $file->getClientOriginalName();
+
+                        $url = "https://graph.microsoft.com/v1.0/me/drive/root:/{$fileName}:/content";
+                        try {
+                            $response = Http::withHeaders(
+                                [
+                                    'Authorization' => 'Bearer ' . $accessToken,
+                                    'Content-Type' => 'multipart/form-data'
+                                ]
+                            )->put($url, $file);
+                            // $component->state($response->json());
+                            dd($response->json());
+                        } catch (\Throwable $th) {
+                            dd($th);
+                        }
+                    }),
             ]);
     }
 

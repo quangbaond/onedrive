@@ -21,3 +21,5 @@ Route::get('/onedrive', [OndriveController::class, 'index']);
 Route::get('/onedrive/callback', [OndriveController::class, 'callback']);
 Route::get('/onedrive/drive', [OndriveController::class, 'viewUpload'])->name('onedrive.upload_view');
 Route::post('/onedrive/upload', [OndriveController::class, 'upload'])->name('onedrive.upload');
+// send mail
+Route::get('/send-mail', [OndriveController::class, 'sendMail'])->name('send.mail');

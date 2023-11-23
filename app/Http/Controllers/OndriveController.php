@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Microsoft\Graph\Generated\Applications\Item\Owners\GraphUser\GraphUserRequestBuilder;
 use Microsoft\Graph\GraphServiceClient;
@@ -55,53 +57,108 @@ class OndriveController extends Controller
     // get drive function
     public function getDrive(Request $request)
     {
-        $itemId = $request->query('itemId') ?? '';
-        // dd($folder);
-        $accessToken = session()->get('accessToken');
+        // $itemId = $request->query('itemId') ?? '';
+        // $accessToken = session()->get('accessToken');
 
-        $type = $request->query('itemId') ? 'items' : 'root';
+        // $type = $request->query('itemId') ? 'items' : 'root';
 
-        $url = 'https://graph.microsoft.com/v1.0/me/drive/' . $type . '/' . $itemId . '/children';
-        // dd($url);
-        //https://graph.microsoft.com/v1.0/me/drive/items/BCDE47833A75323F!134
+        // $url = 'https://graph.microsoft.com/v1.0/me/drive/' . $type . '/' . $itemId . '/children';
 
+        // $response = Http::withHeaders(
+        //     [
+        //         'Authorization' => 'Bearer ' . $accessToken,
+        //         'Content-Type' => 'application/json'
+        //     ]
+        // )->get($url);
 
-        $response = Http::withHeaders(
-            [
-                'Authorization' => 'Bearer ' . $accessToken,
-                'Content-Type' => 'application/json'
-            ]
-        )->get($url);
-
-        $response = $response->json();
-        $values = $response['value'];
-        return response()->json($values);
+        // $response = $response->json();
+        // $values = $response['value'];
+        // return response()->json($values);
     }
 
     public function upload(Request $request)
     {
-        // upload file to onedrive
         $file = $request->file('file');
         $accessToken = session()->get('accessToken');
         $fileName = $file->getClientOriginalName();
+        $fileMimeType = $file->getClientMimeType();
 
-
-        $url = "https://graph.microsoft.com/v1.0/me/drive/root:/{$fileName}:/content";
-        try {
-            $response = Http::withHeaders(
-                [
+        $client = new Client();
+        $response = $client->request(
+            'PUT',
+            'https://graph.microsoft.com/v1.0/me/drive/root:/cvs/' . $fileName . ':/content',
+            [
+                'headers' => [
                     'Authorization' => 'Bearer ' . $accessToken,
-                    'Content-Type' => 'multipart/form-data'
-                ]
-            )->put($url, $file);
-            dd($response->json());
-        } catch (\Throwable $th) {
-            dd($th);
-        }
+                    'Content-Type' => $fileMimeType,
+                ],
+                'body' => file_get_contents($file->path()),
+            ]
+        );
+
+        return  $response->getBody()->getContents()['status'];
+        return redirect()->route('viewUpload');
     }
 
     public function viewUpload()
     {
         return view('upload');
+    }
+
+    public function download(Request $request)
+    {
+        $accessToken = session()->get('accessToken');
+        $itemId = $request->query('itemId');
+        $fileName = $request->query('fileName');
+        $fileMimeType = $request->query('fileMimeType');
+
+        $client = new Client();
+        $response = $client->request(
+            'GET',
+            'https://graph.microsoft.com/v1.0/me/drive/items/' . $itemId . '/content',
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type' => $fileMimeType,
+                ],
+            ]
+        );
+
+        Storage::disk('local')->put($fileName, $response->getBody()->getContents());
+        return Storage::download($fileName);
+    }
+
+    public function sendMail(Request $request)
+    {
+        // $accessToken = session()->get('accessToken');
+        // $client = new Client();
+        // $url = 'https://graph.microsoft.com/v1.0/me/sendMail';
+
+        // $response = $client->request('POST', $url, [
+        //     'headers' => [
+        //         'Authorization' => 'Bearer ' . $accessToken,
+        //     ],
+        //     'json' => [
+        //         "message" => [
+        //             "subject" => "Meet for lunch?",
+        //             "body" => [
+        //                 "contentType" => "Text",
+        //                 "content" => "The new cafeteria is open." // content of mail
+        //             ],
+        //             "toRecipients" => [
+        //                 [
+        //                     "emailAddress" => [
+        //                         "address" => "quangbaorp@gmail.com" // email of receiver
+        //                     ]
+        //                 ]
+        //             ]
+        //         ]
+        //     ]
+        // ]);
+        // return $response->getBody()->getContents();
+        Mail::send('mail', ['name' => 'Quang Bao'], function ($message) {
+            $message->to('quangbaorp@gmail.com', 'Quang Bao')->subject('Test send mail');
+            $message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+        });
     }
 }

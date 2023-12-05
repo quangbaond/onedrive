@@ -10,5 +10,5 @@ class CvOverview extends BaseWidget
 
     protected static bool $isLazy = false;
 
-    protected static string $view = 'owner-overview-resource.widgets.onwer-overview';
+    protected static string $view = 'admin.owner-overview-resource.widgets.onwer-overview';
 }

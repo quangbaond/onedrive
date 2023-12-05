@@ -11,5 +11,5 @@ class ActivityLog extends BaseWidget
 
     protected static bool $isLazy = false;
 
-    protected static string $view = 'activity-log-resource.widgets.activity-log';
+    protected static string $view = 'admin.activity-log-resource.widgets.activity-log';
 }

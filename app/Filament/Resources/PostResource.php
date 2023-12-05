@@ -56,7 +56,7 @@ class PostResource extends Resource
                         ->numeric()
                         ->required()
                         ->placeholder(__('Limit')),
-                    Forms\Components\Datepicker::make('end_date')
+                    Forms\Components\DateTimePicker::make('end_date')
                         ->required()
                         ->placeholder(__('End date')),
                     Forms\Components\RichEditor::make('content')

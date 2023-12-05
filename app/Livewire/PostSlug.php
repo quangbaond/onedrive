@@ -12,6 +12,6 @@ class PostSlug extends Component
         $slug = $request->slug;
         $post = \App\Models\Post::query()->where('slug', $slug)->firstOrFail();
 
-        return view('livewire.post-slug', compact('post'));
+        return view('livewire.post-slug', compact('post', 'slug'));
     }
 }

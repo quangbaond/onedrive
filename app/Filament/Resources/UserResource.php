@@ -56,7 +56,6 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('memory_usage')
                             ->label('Dung lượng sử dụng')
                             ->disabled(true)
-                            ->required()
                             ->suffix('MB')
                             ->numeric()
                             ->placeholder(__('Memory Usage')),
@@ -64,7 +63,6 @@ class UserResource extends Resource
                             ->label('Nhóm người dùng')
                             ->relationship('groups', 'name')
                             ->multiple()
-                            ->required()
                             ->preload()
                             ->placeholder(__('Groups')),
                         Forms\Components\Select::make('permissions')

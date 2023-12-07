@@ -22,6 +22,15 @@ class CreateCv extends CreateRecord
         $data['created_by'] = auth()->id();
         $data['updated_by'] = auth()->id();
         $data['url'] = env('APP_URL'). '/posts/cv/'. \Illuminate\Support\Str::slug($data['name']) . '-' . \Illuminate\Support\Str::random(5);
+        $path = storage_path('app/public/' . $data['cv']);
+
+        $recordSizeInBytes = strlen(json_encode($data));
+        $fileSizeInBytes = \Illuminate\Support\Facades\File::size($path);
+        $totalSizeRecord  = $recordSizeInBytes + $fileSizeInBytes;
+        $fileSizeInMegabytes = round($totalSizeRecord / 1024 / 1024,4);
+        User::query()->find(auth()->id())->update([
+            'memory_usage' => auth()->user()->memory_usage + $fileSizeInMegabytes
+        ]);
         return $data;
     }
 
@@ -47,6 +56,7 @@ class CreateCv extends CreateRecord
                     'body' => file_get_contents($path),
                 ]
             );
+
         } catch (\Exception $e) {
             Notification::make()
                 ->title('Save CV to onedrive failed')

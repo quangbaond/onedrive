@@ -18,7 +18,28 @@ class Post extends Model
         'industry',
         'limit',
         'end_date',
+        'industry_id',
+        'company_name',
+        'province_code',
+        'district_code',
+        'is_new',
+        'published',
         'created_by',
         'updated_by',
     ];
+
+    public function industry(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Industry::class);
+    }
+
+    public function province(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Province::class, 'province_code', 'code');
+    }
+
+    public function district(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(District::class, 'district_code', 'code');
+    }
 }

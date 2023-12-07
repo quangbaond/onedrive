@@ -4,11 +4,14 @@ namespace App\Filament\Resources\CvResource\Pages;
 
 use App\Filament\Resources\CvResource;
 use App\Models\Config;
+use App\Models\User;
 use App\Services\OneDriveService;
 use Filament\Actions;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Routing\Redirector;
+use JetBrains\PhpStorm\NoReturn;
 
 class CreateCv extends CreateRecord
 {
@@ -18,8 +21,10 @@ class CreateCv extends CreateRecord
     {
         $data['created_by'] = auth()->id();
         $data['updated_by'] = auth()->id();
+        $data['url'] = env('APP_URL'). '/posts/cv/'. \Illuminate\Support\Str::slug($data['name']) . '-' . \Illuminate\Support\Str::random(5);
         return $data;
     }
+
 
     protected function afterCreate(): void
     {

@@ -24,86 +24,57 @@ class CvResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $label = 'Cv';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Cv Information')
-                    ->description('This information will be publicly visible.')
+                Forms\Components\Section::make('Thông tin cơ bản')
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->label('Tên')
                             ->autofocus()
-                            ->required()
-                            ->placeholder(__('Name')),
+                            ->required(),
                         Forms\Components\TextInput::make('email')
+                            ->label('Email')
                             ->email()
                             ->required()
-                            ->unique(ignorable: fn ($record) => $record)
-                            ->placeholder(__('Email')),
+                            ->unique(ignorable: fn ($record) => $record),
                         Forms\Components\TextInput::make('phone')
-                            ->placeholder(__('Phone')),
+                            ->label('Số điện thoại'),
                         Forms\Components\DatePicker::make('birthday')
-                            ->placeholder(__('Birthday')),
-                        Forms\Components\Textarea::make('note')
-                            ->placeholder(__('Note')),
+                            ->label('Ngày sinh'),
+                        Forms\Components\RichEditor::make('note')
+                            ->label('Ghi chú')
+                            ->columnSpan(2),
+                        Forms\Components\Textarea::make('other')
+                            ->label('Khác'),
                         Forms\Components\Textarea::make('address')
-                            ->placeholder(__('Address')),
-
-                        Forms\Components\Select::make('industry')
+                            ->label('Địa chỉ'),
+                        Forms\Components\Select::make('industry_id')
+                            ->label('Ngành nghề')
+                            ->relationship('industry', 'name')
                             ->placeholder(__('Industry'))
-                            ->required()
-                            ->options([
-                                'it' => 'IT',
-                                'marketing' => 'Marketing',
-                                'sale' => 'Sale',
-                                'hr' => 'HR',
-                                'accountant' => 'Accountant',
-                                'other' => 'Other',
-                            ]),
+                            ->required(),
                         Forms\Components\Select::make('experience')
+                            ->label('Kinh nghiệm')
                             ->required()
-                            ->placeholder(__('Experience'))
                             ->options(function () {
                                 for ($i = 0; $i <= 100; $i++) {
-                                    $options[$i] = $i .' years';
+                                    $options[$i] = $i .' Năm';
                                 }
                                 return $options;
                             }),
                         Forms\Components\TextInput::make('salary')
+                            ->label('Mức lương')
                             ->placeholder(__('Salary')),
-                        Forms\Components\Select::make('position')
-                            ->required()
-                            ->placeholder(__('Position'))
-                            ->options([
-                                'dev' => 'Dev',
-                                'tester' => 'Tester',
-                                'ba' => 'BA',
-                                'pm' => 'PM',
-                                'hr' => 'HR',
-                                'accountant' => 'Accountant',
-                                'other' => 'Other',
-                            ]),
-                        Forms\Components\Select::make('level')
-                            ->placeholder(__('Level'))
-                            ->options([
-                                'junior' => 'Junior',
-                                'senior' => 'Senior',
-                                'leader' => 'Leader',
-                                'other' => 'Other',
-                            ]),
-                        Forms\Components\Select::make('language')
-                            ->placeholder(__('Language'))
-                            ->options([
-                                'english' => 'English',
-                                'japanese' => 'Japanese',
-                                'chinese' => 'Chinese',
-                                'korean' => 'Korean',
-                                'other' => 'Other',
-                            ]),
-
-                        Forms\Components\Textarea::make('skill')
-                            ->rows(3)
-                            ->placeholder(__('Skill')),
+                        Forms\Components\TextInput::make('position')
+                            ->label('Vị trí')
+                            ->required(),
+//                        Forms\Components\TextInput::make('level')
+//                            ->label('Cấp bậc')
+//                            ->placeholder(__('Level')),
                         Forms\Components\FileUpload::make('cv')
                             ->placeholder(__('Cv'))
                             ->preserveFilenames()
@@ -112,12 +83,12 @@ class CvResource extends Resource
                             ->reorderable()
                             ->downloadable()
                             ->previewable(true)
+                            ->columnSpan(2)->columns(1)
                             ->required(fn (string $context): bool => $context === 'create'),
-
                         Forms\Components\DateTimePicker::make('interview_time')
-                            ->placeholder(__('Interview Time')),
+                            ->label('Thời gian phỏng vấn'),
                         Forms\Components\Select::make('interview_result')
-                            ->placeholder(__('Interview Result'))
+                            ->label('Kết quả phỏng vấn')
                             ->options([
                                 'pending' => 'Pending',
                                 'pass' => 'Pass',
@@ -126,6 +97,7 @@ class CvResource extends Resource
                             ]),
                         // group id
                         Forms\Components\Select::make('groups')
+                            ->label('Nhóm người dùng')
                             ->relationship('groups', 'name')
                             ->options(function () {
                                 if(auth()->user()->is_admin) {
@@ -135,10 +107,8 @@ class CvResource extends Resource
                             })
                             ->multiple()
                             ->required()
-                            ->preload()
-                            ->placeholder('Group')
-                    ])
-                    ->columns(2)
+                            ->preload(),
+                    ])->columns(2)
             ]);
     }
 
@@ -147,90 +117,64 @@ class CvResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Tên')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label('Số điện thoại')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('address')
+                    ->label('Địa chỉ')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('birthday')
+                    ->label('Ngày sinh')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('note')
+                Tables\Columns\TextColumn::make('url')
+                    ->label('Ngày sinh')
+                    ->formatStateUsing(fn (string $state): string => "<a href='{$state}' target='_blank'>{$state}</a>")->Html()
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Ngày tạo')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Ngày cập nhật')
                     ->searchable()
                     ->sortable(),
             ])
             ->filters([
                 // select filter industry
-                Tables\Filters\SelectFilter::make('industry')
-                    ->placeholder(__('Industry'))
-                    ->options([
-                        'it' => 'IT',
-                        'marketing' => 'Marketing',
-                        'sale' => 'Sale',
-                        'hr' => 'HR',
-                        'accountant' => 'Accountant',
-                        'other' => 'Other',
-                    ]),
-                // select filter position
-                Tables\Filters\SelectFilter::make('position')
-                    ->placeholder(__('Position'))
-                    ->options([
-                        'dev' => 'Dev',
-                        'tester' => 'Tester',
-                        'ba' => 'BA',
-                        'pm' => 'PM',
-                        'hr' => 'HR',
-                        'accountant' => 'Accountant',
-                        'other' => 'Other',
-                    ]),
-                // select filter level
-                Tables\Filters\SelectFilter::make('level')
-                    ->placeholder(__('Level'))
-                    ->options([
-                        'junior' => 'Junior',
-                        'senior' => 'Senior',
-                        'leader' => 'Leader',
-                        'other' => 'Other',
-                    ]),
-                // select filter language
-                Tables\Filters\SelectFilter::make('language')
-                    ->placeholder(__('Language'))
-                    ->options([
-                        'english' => 'English',
-                        'japanese' => 'Japanese',
-                        'chinese' => 'Chinese',
-                        'korean' => 'Korean',
-                        'other' => 'Other',
-                    ]),
+                Tables\Filters\SelectFilter::make('industry_id')
+                ->label('Ngành nghề')
+                    ->relationship('industry', 'name')
+                    ->options(function () {
+                        return \App\Models\Industry::all()->pluck('name', 'id');
+                    }),
                 // select filter experience
                 Tables\Filters\SelectFilter::make('experience')
-                    ->placeholder(__('Experience'))
+                    ->label('Kinh nghiệm')
                     ->options(function () {
                         for ($i = 0; $i <= 100; $i++) {
                             $options[$i] = $i .' years';
                         }
                         return $options;
                     }),
-                Tables\Filters\SelectFilter::make('interview_result')
-                    ->placeholder(__('Interview Result'))
-                    ->options([
-                        'pending' => 'Pending',
-                        'pass' => 'Pass',
-                        'fail' => 'Fail',
-                        'other' => 'Other',
-                    ]),
+//                Tables\Filters\SelectFilter::make('interview_result')
+//                    ->label('Kết quả phỏng vấn')
+//                    ->options([
+//                        'pending' => 'Pending',
+//                        'pass' => 'Pass',
+//                        'fail' => 'Fail',
+//                        'other' => 'Other',
+//                    ]),
 //                Tables\Filters\SelectFilter::make('groups')
 //                    ->relationship('groups', 'name')
 //                    ->options(function () {
@@ -247,9 +191,9 @@ class CvResource extends Resource
                 Tables\Filters\Filter::make('interview_time')
                     ->form([
                         Forms\Components\DateTimePicker::make('interview_time_from')
-                            ->placeholder(__('Interview Time')),
+                            ->label('Thời gian bắt đầu'),
                         Forms\Components\DateTimePicker::make('interview_time_to')
-                            ->placeholder(__('Interview Time')),
+                            ->label('Thời gian kết thúc'),
                     ])
                     ->query(function (Builder $query, array $data) {
                         return $query
@@ -268,10 +212,13 @@ class CvResource extends Resource
                         }
                         return $indicator;
                     })
-                    ->columnSpan(2)->columns(2)
-                    ->label(__('Interview Time')),
-            ], layout: Tables\Enums\FiltersLayout::AboveContent)->filtersFormColumns(4)
-            ->actions(actions: [Tables\Actions\EditAction::make(), Tables\Actions\DeleteAction::make()])
+                    ->columnSpan(2)->columns(2),
+            ], layout: Tables\Enums\FiltersLayout::AboveContent)->filtersFormColumns(2)
+            ->actions(actions: [
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make(),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

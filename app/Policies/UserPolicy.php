@@ -12,7 +12,8 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        if ($user->is_admin) {
+        $permission = $user->permissions()->where('permission', 'view user')->first();
+        if ($user->is_admin || $permission) {
             return true;
         }
         return false;
@@ -23,7 +24,8 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        if ($user->is_admin) {
+        $permission = $user->permissions()->where('permission', 'view user')->first();
+        if ($user->is_admin || $permission) {
             return true;
         }
         return false;
@@ -35,7 +37,8 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        if ($user->is_admin) {
+        $permission = $user->permissions()->where('permission', 'create user')->first();
+        if ($user->is_admin || $permission) {
             return true;
         }
         return false;
@@ -46,7 +49,8 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        if ($user->is_admin) {
+        $permission = $user->permissions()->where('permission', 'update user')->first();
+        if ($user->is_admin || $permission) {
             return true;
         }
         return false;
@@ -57,7 +61,8 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        if ($user->is_admin) {
+        $permission = $user->permissions()->where('permission', 'delete user')->first();
+        if ($user->is_admin || $permission) {
             return true;
         }
         return false;
@@ -68,7 +73,8 @@ class UserPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        if ($user->is_admin) {
+        $permission = $user->permissions()->where('permission', 'delete user')->first();
+        if ($user->is_admin || $permission) {
             return true;
         }
         return false;
@@ -79,7 +85,8 @@ class UserPolicy
      */
     public function forceDelete(User $user, User $model): bool
     {
-        if ($user->is_admin) {
+        $permission = $user->permissions()->where('permission', 'delete user')->first();
+        if ($user->is_admin || $permission) {
             return true;
         }
         return false;

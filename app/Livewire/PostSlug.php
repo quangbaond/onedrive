@@ -11,6 +11,8 @@ class PostSlug extends Component
     {
         $slug = $request->slug;
         $post = \App\Models\Post::query()->where('slug', $slug)->firstOrFail();
+//        $recordSizeInBytes = strlen(json_encode($post->getAttributes()));
+//        dd($recordSizeInBytes);
 
         return view('livewire.post-slug', compact('post', 'slug'));
     }

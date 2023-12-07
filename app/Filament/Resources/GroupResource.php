@@ -19,23 +19,24 @@ class GroupResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $label = 'Nhóm';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Group Information')
-                    ->description('This information will be publicly visible.')
+                Forms\Components\Section::make('Thông tin nhóm')
                     ->columns(1)
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->label('Tên nhóm')
                             ->autofocus()
                             ->required()
                             ->maxValue(255)
-                            ->unique(Group::class, 'name')
-                            ->placeholder(__('Name')),
+                            ->unique(Group::class, 'name'),
                         Forms\Components\Textarea::make('description')
+                            ->label('Mô tả')
                             ->required()
-                            ->placeholder(__('Description')),
                     ])
             ]);
     }
@@ -45,9 +46,11 @@ class GroupResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Tên nhóm')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')
+                    ->label('Mô tả')
                     ->searchable()
                     ->sortable(),
             ])
@@ -57,6 +60,7 @@ class GroupResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

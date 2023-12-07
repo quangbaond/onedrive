@@ -19,8 +19,9 @@ Route::get('/posts/{industry}', [\App\Http\Controllers\PostController::class, 'i
 Route::get('/posts/detail/{slug}', [\App\Http\Controllers\PostController::class, 'slug'])->name('posts.show');
 Route::get('/onedrive', [OndriveController::class, 'index'])->name('onedrive.login');
 Route::get('/onedrive/callback', [OndriveController::class, 'callback']);
-Route::get('/onedrive/drive', [OndriveController::class, 'getDrive'])->name('onedrive.upload_view');
-Route::post('/onedrive/upload', [OndriveController::class, 'upload'])->name('onedrive.upload');
+Route::get('/memory_limit', function () {
+    return view('memory_limit');
+})->name('memory_limit');
 
 \Illuminate\Support\Facades\Auth::routes();
 

@@ -7,31 +7,25 @@ use Livewire\Component;
 class ListPost extends Component
 {
 
-    public string $industryActive = 'All';
-    public array $industries = [
-        'All',
-        'IT',
-        'Finance',
-        'Marketing',
-        'Sales',
-        'HR',
-        'Others',
-    ];
+    public int|null $industryIdActive = null;
+
     public function render(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application
     {
-        $listPost = \App\Models\Post::query()->where('end_date', '>=', now());
-        $industryActive = $this->industryActive;
+        $listPost = \App\Models\Post::query()->where('end_date', '>=', now())->where('published', true);
+        $industryIdActive = $this->industryIdActive;
 
-        if ($this->industryActive !== 'All') {
-            $listPost->where('industry', $this->industryActive);
+        if ($this->industryIdActive) {
+            $listPost->where('industry_id', $this->industryIdActive);
         }
 
+        $industries = \App\Models\Industry::all();
+
         $listPost = $listPost->get();
-        return view('livewire.list-post', compact('listPost', 'industryActive'));
+        return view('livewire.list-post', compact('listPost', 'industryIdActive', 'industries'));
     }
 
-    public function filterIndustry(string $industry = ''): void
+    public function filterIndustry(int|null $industryId = null): void
     {
-        $this->industryActive = $industry;
+        $this->industryIdActive = $industryId;
     }
 }

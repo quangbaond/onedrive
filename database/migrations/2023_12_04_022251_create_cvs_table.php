@@ -17,11 +17,12 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->boolean('is_admin')->default(false);
             $table->string('phone')->nullable();
-            $table->string('note')->nullable();
+            $table->text('note')->nullable();
+            $table->text('other')->nullable();
             $table->string('address')->nullable();
             $table->date('birthday')->nullable();
             $table->string('cv')->nullable();
-            $table->string('industry')->nullable();
+            $table->foreignId('industry_id')->nullable()->constrained('industries');
             $table->string('experience')->nullable();
             $table->string('salary')->nullable();
             $table->string('position')->nullable();
@@ -31,7 +32,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->dateTime('interview_time')->nullable();
             $table->string('interview_result')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('url')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->rememberToken();

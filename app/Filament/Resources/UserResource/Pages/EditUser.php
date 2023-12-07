@@ -10,43 +10,13 @@ class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
 
-    // if user is admin, then can edit all users
-    // if user is not admin, then can only edit himself
-    public function canEdit(): bool
+    protected function mutateFormDataBeforeSave(array $data): array
     {
-        return auth()->user()->is_admin || auth()->user()->id == $this->record->id;
-    }
+        if (!isset($data['password'])) {
+            unset($data['password']);
+        }
 
-    public function canDelete(): bool
-    {
-        return auth()->user()->is_admin;
-    }
-
-
-
-    public function canUpdate(): bool
-    {
-        return auth()->user()->is_admin || auth()->user()->id == $this->record->id;
-    }
-
-    public function canView(): bool
-    {
-        return auth()->user()->is_admin || auth()->user()->id == $this->record->id;
-    }
-
-    public function canCreate(): bool
-    {
-        return auth()->user()->is_admin;
-    }
-
-    public function canSearch(): bool
-    {
-        return auth()->user()->is_admin;
-    }
-
-    public function canViewAny(): bool
-    {
-        return auth()->user()->is_admin;
+        return $data;
     }
 
     protected function getHeaderActions(): array

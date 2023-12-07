@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
@@ -30,6 +31,8 @@ class Cv extends Model
         'avatar',
         'interview_time',
         'interview_result',
+        'url',
+        'industry_id',
         'created_by',
         'updated_by',
     ];
@@ -43,5 +46,10 @@ class Cv extends Model
     public function groups(): BelongsToMany
     {
         return  $this->belongsToMany(Group::class, 'cv_groups');
+    }
+
+    public function industry(): BelongsTo
+    {
+        return  $this->BelongsTo(Industry::class);
     }
 }

@@ -4,7 +4,9 @@ namespace App\Filament\Resources\CvResource\Pages;
 
 use App\Filament\Resources\CvResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use JetBrains\PhpStorm\NoReturn;
 
 class ListCvs extends ListRecords
 {
@@ -37,10 +39,9 @@ class ListCvs extends ListRecords
         if(auth()->user()->is_admin){
             $data = CvResource::getModel()::query();
         } else {
-            $group = auth()->user()->groups()->get()->pluck('name')->toArray();
-            $data = CvResource::getModel()::query()->whereHas('groups', function ($query) use ($group) {
-                $query->whereIn('name', $group);
-                // or group = null
+            $groups = auth()->user()->groups()->get()->pluck('name')->toArray();
+            $data = CvResource::getModel()::query()->whereHas('groups', function ($query) use ($groups) {
+                $query->whereIn('name', $groups);
                 $query->orWhereNull('group_id');
             });
         }

@@ -17,10 +17,14 @@ return new class extends Migration
             $table->string('slug');
             $table->text('content');
             $table->string('email_contact');
-            $table->string('address')->nullable();
-            $table->string('industry')->nullable();
+            $table->string('company_name');
+            $table->string('province_code');
+            $table->string('district_code');
+            $table->foreignId('industry_id')->nullable()->constrained('industries');
             $table->integer('limit')->nullable();
             $table->date('end_date')->nullable();
+            $table->boolean('is_new')->default(false);
+            $table->boolean('published')->default(true);
             $table->foreignId('created_by')->nullable()->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->timestamps();

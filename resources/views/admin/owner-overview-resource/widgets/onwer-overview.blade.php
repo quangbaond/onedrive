@@ -8,7 +8,7 @@
             <x-filament-panels::avatar.user size="lg" :user="auth()->user()" />
             <div class="flex-1">
                 <h2 class="grid flex-1 text-base font-semibold leading-6 text-gray-950 dark:text-white">
-                    {{ 'My total cvs' }}
+                    {{ 'Tổng Cv của bạn' }}
                 </h2>
                 <p>
                     {{$cvs}} {{ 'Cv' }}

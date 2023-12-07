@@ -9,13 +9,13 @@
                 <x-filament-panels::avatar.user size="lg" :user="$activityLog->causer" />
                 <div class="flex-1">
                     <h2 class="grid flex-1 text-base font-semibold leading-6 text-gray-950 dark:text-white">
-                        {{ 'Log lasted' }}
+                        {{ 'Lịch sử hoạt động' }}
                     </h2>
                     <p class="text-sm text-gray-500 dark:text-gray-400">
                         {{ filament()->getUserName($activityLog->causer) }}
                     </p>
                     <p>
-                        {{$activityLog->causer->name}} {{ $activityLog->description }} {{ \App\Helpers\Helper::getLogSubjectType($activityLog->subject_type) }} {{ $activityLog->subject->name ?? '' }}
+                        {{$activityLog->causer->name}} {{ \App\Helpers\Helper::getLogDescription($activityLog->description) }} {{ \App\Helpers\Helper::getLogSubjectType($activityLog->subject_type) }} {{ \App\Helpers\Helper::getLogSubject($activityLog->subject) }}
                     </p>
                     <p>{{ $activityLog->created_at }}</p>
                 </div>
